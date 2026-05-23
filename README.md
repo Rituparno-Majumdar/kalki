@@ -21,10 +21,13 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"/>
-  <img src="https://img.shields.io/badge/MVP-KalkiPrakriti-green.svg" alt="MVP: KalkiPrakriti"/>
+  <img src="https://img.shields.io/badge/status-seeking%20contributors-blueviolet.svg" alt="Status: Seeking Contributors"/>
   <img src="https://img.shields.io/badge/data-public%20only-brightgreen.svg" alt="Public Data Only"/>
   <img src="https://img.shields.io/badge/PRs-welcome-orange.svg" alt="PRs Welcome"/>
 </p>
+
+> **Status: Architecture & Design Phase — No code exists yet.**
+> We are actively seeking first contributors. If you're a Python developer, data engineer, ML researcher, or someone who knows how to wrangle Indian government data — [this is where to start](#contributing).
 
 ---
 
@@ -97,7 +100,7 @@ Modules are ordered by **risk level** (low → high) and **data availability** (
 
 | Priority | Module | Domain | Risk | Data Availability | Status |
 |:---:|---|---|:---:|:---:|:---:|
-| 1 | [**KalkiPrakriti**](#kalkiprakriti-) 🌿 | Climate & Disaster | 🟢 Low | 🟢 High | **MVP — Active** |
+| 1 | [**KalkiPrakriti**](#kalkiprakriti-) 🌿 | Climate & Disaster | 🟢 Low | 🟢 High | **Seeking First Contributors** |
 | 2 | [**KalkiShiksha**](#kalkishiksha-) 📚 | Education | 🟢 Low | 🟢 High | Planned |
 | 3 | [**KalkiSwastha**](#kalkiswastha-) 🏥 | Health & Epidemiology | 🟢 Low | 🟡 Medium | Planned |
 | 4 | [**KalkiArtha**](#kalkiartha-) 💰 | Economic Stress | 🟡 Medium | 🟡 Medium | Planned |
@@ -348,18 +351,15 @@ kalki/
 git clone https://github.com/YOUR_USERNAME/kalki.git
 cd kalki
 
-# Set up the development environment
+# Set up the development environment (Python 3.11+ required)
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # venv\Scripts\activate   # Windows
 
-pip install -r requirements.txt
-
-# Run tests
-pytest
-
 # Pick a module, pick a data source, start building!
 ```
+
+> ⚠️ **Note:** `requirements.txt`, Docker setup, and tests are being established as part of the first contribution wave. See [open issues](https://github.com/Rituparno-Majumdar/kalki/issues) to contribute to this.
 
 > 📖 See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide, including how to build your first data connector.
 
