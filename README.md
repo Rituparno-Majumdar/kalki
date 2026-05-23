@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/kalki-logo-placeholder.png" alt="Kalki Logo" width="200"/>
+  <img src="docs/assets/kalki-logo.png" alt="Kalki Logo" width="200"/>
 </p>
 
 <h1 align="center">Kalki</h1>
