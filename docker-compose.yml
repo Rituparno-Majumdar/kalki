@@ -1,0 +1,52 @@
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — primary store for KalkiRecord and KalkiSignal
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15
+    container_name: kalki_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kalki
+      POSTGRES_USER: kalki
+      POSTGRES_PASSWORD: kalki_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kalki -d kalki"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Ingestion worker — runs connectors on demand or on a schedule
+  # Start with: docker compose run --rm worker python connectors/example_connector.py
+  # ---------------------------------------------------------------------------
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: kalki_worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PYTHONPATH: /app
+      DATABASE_URL: postgresql://kalki:kalki_dev@postgres:5432/kalki
+      DUCKDB_PATH: /app/data/kalki_analytics.duckdb
+      DATA_LAKE_PATH: /app/data/lake
+      LOG_LEVEL: INFO
+    volumes:
+      - .:/app
+      - worker_data:/app/data
+    working_dir: /app
+    # Keep alive so you can exec into it; remove for scheduled runs
+    command: ["python", "-c", "print('Kalki worker ready. Use: docker compose run --rm worker python connectors/<name>/connector.py')"]
+
+volumes:
+  postgres_data:
+  worker_data:

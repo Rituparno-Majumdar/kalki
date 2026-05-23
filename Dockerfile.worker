@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+
+# System deps for tabula-py (requires Java) and camelot (requires ghostscript + opencv)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    default-jre-headless \
+    ghostscript \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python dependencies
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -e ".[dev]"
+
+# Copy source (overridden by the volume mount in docker-compose for dev)
+COPY . .
+
+ENV PYTHONPATH=/app

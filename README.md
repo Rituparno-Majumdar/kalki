@@ -346,20 +346,25 @@ kalki/
 
 ### For Contributors
 
+**Requirements:** Python 3.11+, Docker Desktop
+
 ```bash
 # Fork the repository on GitHub, then:
 git clone https://github.com/YOUR_USERNAME/kalki.git
 cd kalki
 
-# Set up the development environment (Python 3.11+ required)
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
+# Start Postgres + worker (Docker required)
+make dev
 
-# Pick a module, pick a data source, start building!
+# Initialise the database schema
+make db
+
+# Run the example connector to verify everything works
+make example
+
+# See all available commands
+make help
 ```
-
-> ⚠️ **Note:** `requirements.txt`, Docker setup, and tests are being established as part of the first contribution wave. See [open issues](https://github.com/Rituparno-Majumdar/kalki/issues) to contribute to this.
 
 > 📖 See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide, including how to build your first data connector.
 

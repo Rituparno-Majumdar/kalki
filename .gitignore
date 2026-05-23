@@ -12,6 +12,7 @@ gist.md
 .env.test
 .env.production
 *.env*
+!.env.example
 
 # Python build and caches
 __pycache__/
@@ -44,3 +45,12 @@ Desktop.ini
 .antigravitycli/
 scratch/
 browser_recordings/
+
+# Kalki runtime data (created by make dev / setup_db.py)
+data/
+*.duckdb
+
+# Python packaging
+*.egg-info/
+.eggs/
+
