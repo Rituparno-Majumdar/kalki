@@ -25,11 +25,9 @@ from datetime import datetime, timezone
 from connectors.base_connector import (
     BaseConnector,
     ConnectorMetadata,
-    KalkiLocation,
-    KalkiRecord,
-    Module,
     ValidationResult,
 )
+from schema.models import KalkiLocation, KalkiRecord, Module
 
 logger = logging.getLogger(__name__)
 

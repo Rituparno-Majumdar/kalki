@@ -26,72 +26,17 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
 from typing import Any
+
+from schema.models import KalkiRecord, Module
 
 
 logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Core data types
+# Connector-specific types (data types live in schema/models.py)
 # ---------------------------------------------------------------------------
-
-class Module(str, Enum):
-    PRAKRITI = "kalki_prakriti"   # Climate & Disaster
-    SHIKSHA  = "kalki_shiksha"    # Education
-    SWASTHA  = "kalki_swastha"    # Health & Epidemiology
-    ARTHA    = "kalki_artha"      # Economic Stress
-    NAGRIK   = "kalki_nagrik"     # Civic Infrastructure
-    SAMAJ    = "kalki_samaj"      # Social & Demographic
-    DHARMA   = "kalki_dharma"     # Governance & Transparency
-    CRIME    = "kalki_crime"      # Crime Patterns (build last)
-
-
-@dataclass
-class KalkiLocation:
-    """India administrative hierarchy for a data record."""
-    state: str
-    district: str
-    block: str | None = None
-    village: str | None = None
-
-    # ISO 3166-2 state code where known (e.g. "IN-OD" for Odisha)
-    state_code: str | None = None
-    # LGD district code (Govt of India Local Government Directory)
-    district_lgd_code: str | None = None
-
-
-@dataclass
-class KalkiRecord:
-    """
-    The standard output unit for every Kalki connector.
-
-    Every connector's to_standard_schema() must return a list of these.
-    """
-    # Who produced this record
-    source_name: str              # e.g. "IMD District Weather"
-    source_url: str               # exact URL the data was fetched from
-    connector_version: str        # semver of the connector (e.g. "0.1.0")
-    module: Module
-
-    # Where and when
-    location: KalkiLocation
-    record_timestamp: datetime    # the time the *data* refers to
-    fetch_timestamp: datetime     # the time the connector fetched it
-
-    # The data payload — free-form dict; schema defined per connector
-    data: dict[str, Any]
-
-    # Data quality score: composite 0.0–1.0 (see ARCHITECTURE.md)
-    # Completeness 30% + Timeliness 25% + Consistency 20% +
-    # Accuracy 15% + Provenance 10%
-    data_quality_score: float = 0.0
-
-    # Raw source preserved for audit trail (never discard)
-    raw_source_hash: str | None = None   # SHA-256 of the raw document
-
 
 @dataclass
 class ConnectorMetadata:
