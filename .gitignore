@@ -1,0 +1,46 @@
+# Kalki Git Ignore Registry
+
+# Exclude Recruitment Teaser (moved to GitHub Gist)
+KALKI_GIST.md
+Gist.md
+gist.md
+
+# local development environments
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.env*
+
+# Python build and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+build/
+dist/
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Local Agent Workspace Caches
+.antigravitycli/
+scratch/
+browser_recordings/
