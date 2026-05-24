@@ -84,6 +84,6 @@ A connector PR will be merged when it:
 |---|---|
 | `base_connector.py` | Abstract base class — the contract every connector must fulfil |
 | `example_connector.py` | Fully-annotated reference implementation using mock data |
-| `imd/` | India Meteorological Department *(open issue — first connector needed)* |
+| `imd/` | India Meteorological Department — daily district rainfall |
 | `ndma/` | National Disaster Management Authority *(open issue)* |
 | `cpcb/` | Central Pollution Control Board *(open issue)* |
