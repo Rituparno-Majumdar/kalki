@@ -39,6 +39,9 @@ GEOJSON_URL = (
 
 _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; KalkiBot/0.1)"}
 
+# Module-level cache so GeoJSON is only fetched once per process.
+_STATE_MAP_CACHE: dict[str, str] = {}
+
 
 class IMDConnector(BaseConnector):
     """
@@ -62,6 +65,7 @@ class IMDConnector(BaseConnector):
             source_url=IMD_URL,
             module=Module.PRAKRITI,
             version=self.VERSION,
+            maintainer="suiiibhit",
             update_frequency="daily",
             data_format="HTML scrape (embedded JS) + GeoJSON state lookup",
             caveats=[
@@ -93,25 +97,26 @@ class IMDConnector(BaseConnector):
         except requests.RequestException as exc:
             raise ConnectorFetchError(f"Failed to fetch IMD rainfall data: {exc}") from exc
 
-        state_map: dict[str, str] = {}
-        try:
-            geo = requests.get(GEOJSON_URL, timeout=60, headers=_HEADERS)
-            geo.raise_for_status()
-            features = geo.json().get("features", [])
-            for f in features:
-                props = f.get("properties") or {}
-                district = props.get("District", "").strip()
-                state = props.get("STATE", "").strip()
-                if district and state:
-                    state_map[district] = state.title()
-            logger.info("State map loaded: %d district entries", len(state_map))
-        except Exception as exc:
-            logger.warning(
-                "Could not load district-state GeoJSON: %s : state will default to 'India'",
-                exc,
-            )
+        global _STATE_MAP_CACHE
+        if not _STATE_MAP_CACHE:
+            try:
+                geo = requests.get(GEOJSON_URL, timeout=60, headers=_HEADERS)
+                geo.raise_for_status()
+                features = geo.json().get("features", [])
+                for f in features:
+                    props = f.get("properties") or {}
+                    district = props.get("District", "").strip()
+                    state = props.get("STATE", "").strip()
+                    if district and state:
+                        _STATE_MAP_CACHE[district] = state.title()
+                logger.info("State map loaded: %d district entries", len(_STATE_MAP_CACHE))
+            except Exception as exc:
+                logger.warning(
+                    "Could not load district-state GeoJSON: %s — state will default to 'India'",
+                    exc,
+                )
 
-        return {"html": html_bytes, "state_map": state_map}
+        return {"html": html_bytes, "state_map": _STATE_MAP_CACHE}
 
     def validate(self, raw: dict) -> ValidationResult:
         """Check that the HTML portion contains embedded district rainfall data."""
@@ -223,7 +228,8 @@ class IMDConnector(BaseConnector):
 
         return records
 
-    def _compute_quality_score(self, data: dict) -> float:
+    @staticmethod
+    def _compute_quality_score(data: dict) -> float:
         """
         Composite quality score (0.0–1.0) using Kalki 5-dimension framework.
 
