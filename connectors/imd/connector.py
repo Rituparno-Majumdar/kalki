@@ -86,8 +86,9 @@ class IMDConnector(BaseConnector):
 
         Returns:
             {
-              "html":      bytes   : raw HTML from the IMD daily rainfall page
-              "state_map": dict    : {DISTRICT_UPPERCASE: "State Titlecase"}
+              "html":            bytes    : raw HTML from the IMD daily rainfall page
+              "state_map":       dict     : {DISTRICT_UPPERCASE: "State Titlecase"}
+              "fetch_timestamp": datetime : UTC time of the HTML fetch
             }
         """
         try:
@@ -110,13 +111,17 @@ class IMDConnector(BaseConnector):
                     if district and state:
                         _STATE_MAP_CACHE[district] = state.title()
                 logger.info("State map loaded: %d district entries", len(_STATE_MAP_CACHE))
-            except Exception as exc:
+            except (requests.RequestException, ValueError) as exc:
                 logger.warning(
                     "Could not load district-state GeoJSON: %s — state will default to 'India'",
                     exc,
                 )
 
-        return {"html": html_bytes, "state_map": _STATE_MAP_CACHE}
+        return {
+            "html": html_bytes,
+            "state_map": _STATE_MAP_CACHE,
+            "fetch_timestamp": datetime.now(tz=timezone.utc),
+        }
 
     def validate(self, raw: dict) -> ValidationResult:
         """Check that the HTML portion contains embedded district rainfall data."""
@@ -159,7 +164,7 @@ class IMDConnector(BaseConnector):
         state_map: dict[str, str] = raw.get("state_map", {})
 
         source_hash = hashlib.sha256(html).hexdigest()
-        fetch_time = datetime.now(tz=timezone.utc)
+        fetch_time = raw.get("fetch_timestamp") or datetime.now(tz=timezone.utc)
 
         text = html.decode("utf-8", errors="replace")
         areas = _extract_areas(text)
